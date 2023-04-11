@@ -1,0 +1,30 @@
+name: yo-CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Start containers
+        run: docker-compose up -d
+
+      - name: Wait for containers to start
+        run: sleep 5
+
+      - name: Check containers are running
+        run: docker ps
+
+      - name: Stop containers
+        run: docker-compose down
+
+      - name: Dump logs on failure
+        if: failure()
+        run: docker-compose logs
